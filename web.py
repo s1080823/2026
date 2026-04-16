@@ -79,7 +79,7 @@ def read_c():
     Result = ""
     keyword = "楊"
     db = firestore.client()
-    collection_ref = db.collection("靜宜資管2026B")
+    collection_ref = db.collection("靜宜資管")
     docs = collection_ref.get()
     for doc in docs:
         teacher = doc.to_dict()
