@@ -32,7 +32,7 @@ def index():
     link += "<br><a href=/read>讀取Firestore資料</a><br>"
     link += "<br><a href=/read_c>讀取Firestore資料(根據資料關鍵字:楊)</a><br>"
     link += "<br><a href=/search1>老師姓名查詢</a><br>"
-    link += "<br><a href=/read_c>爬取子青老師本學期課程</a><br>"
+    link += "<br><a href=/spider>爬取子青老師本學期課程</a><br>"
     return link
 
 @app.route("/mis")
