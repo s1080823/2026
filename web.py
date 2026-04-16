@@ -96,7 +96,7 @@ def read_c():
         Result = "抱歉，查無此關鍵字姓名之老師資料"
     return Result
 
-@app.route("/search1", methods=["GET", "POST"])
+@app.route("/search", methods=["GET", "POST"])
 def search():
     db = firestore.client()
     results = []
