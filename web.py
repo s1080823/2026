@@ -29,6 +29,7 @@ def index():
     link += "<a href=/account>POST傳值</a><hr>"
     link += "<a href=/calculate>次方與根號計算</a><hr>"
     link += "<br><a href=/read>讀取Firestore資料</a><br>"
+    link += "<br><a href=/read_c>讀取Firestore資料</a><br>"
     return link
 
 @app.route("/mis")
