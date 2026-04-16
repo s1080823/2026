@@ -26,7 +26,7 @@ def index():
     link += "<a href=/account>POST傳值</a><hr>"
     link += "<a href=/calculate>次方與根號計算</a><hr>"
     link += "<br><a href=/read>讀取Firestore資料</a><br>"
-    link += "<br><a href=/read_c>讀取Firestore資料</a><br>"
+    link += "<br><a href=/read_c>讀取Firestore資料(根據資料關鍵字:楊)</a><br>"
     return link
 
 @app.route("/mis")
@@ -84,8 +84,7 @@ def read_c():
     for doc in docs:
         teacher = doc.to_dict()
         if keyword in teacher["name"]:         
-        Result += str(teacher) + "<br>"    
-    return Result
+            Result += str(teacher) + "<br>"
 
     if Result == "":
         Result = "抱歉，查無此關鍵字姓名之老師資料"
