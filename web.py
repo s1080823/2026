@@ -76,6 +76,23 @@ def read():
         Result += str(doc.to_dict()) + "<br>"    
     return Result
 
+@app.route("/read_c")
+def read_c():
+    Result = ""
+    keyword = "楊"
+    db = firestore.client()
+    collection_ref = db.collection("靜宜資管2026B")
+    docs = collection_ref.get()
+    for doc in docs:
+        teacher = doc.to_dict()
+        if keyword in teacher["name"]:         
+        Result += str(teacher) + "<br>"    
+    return Result
+
+    if Result == "":
+        Result = "抱歉，查無此關鍵字姓名之老師資料"
+    return Result
+
 if __name__ == "__main__":
     app.run(debug=True)
     
