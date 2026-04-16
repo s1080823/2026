@@ -1,5 +1,9 @@
+import requests
+from bs4 import BeautifulSoup
+
 from flask import Flask, render_template,request
 from datetime import datetime
+
 import os
 import json
 import firebase_admin
@@ -27,6 +31,8 @@ def index():
     link += "<a href=/calculate>次方與根號計算</a><hr>"
     link += "<br><a href=/read>讀取Firestore資料</a><br>"
     link += "<br><a href=/read_c>讀取Firestore資料(根據資料關鍵字:楊)</a><br>"
+    link += "<br><a href=/read_c>爬取子青老師本學期課程</a><br>"
+    link += "<br><a href=/search1>老師姓名查詢</a><br>"
     return link
 
 @app.route("/mis")
@@ -89,6 +95,36 @@ def read_c():
     if Result == "":
         Result = "抱歉，查無此關鍵字姓名之老師資料"
     return Result
+
+@app.route("/search1", methods=["GET", "POST"])
+def search():
+    db = firestore.client()
+    results = []
+    keyword = ""
+    if request.method == "POST":
+        keyword = request.form.get("keyword")
+        collection_ref = db.collection("靜宜資管")
+        docs = collection_ref.get()
+        for doc in docs:
+            user = doc.to_dict()
+            if keyword in user["name"]:
+                results.append({
+                    "name": user["name"],
+                    "lab": user["lab"]
+                })
+    return render_template("search.html", results=results, keyword=keyword)
+
+@app.route("/spider")
+def spider():
+    R = ""
+    url = "https://www1.pu.edu.tw/~tcyang/course.html"
+    Data = requests.get(url)
+    Data.encoding = "utf-8"
+    sp = BeautifulSoup(Data.text, "html.parser")
+    result=sp.select(".team-box a")
+    for i in result:
+        R += i.text + i.get("href") + "<br>" 
+    return R
 
 if __name__ == "__main__":
     app.run(debug=True)
