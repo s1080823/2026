@@ -35,6 +35,7 @@ def index():
     link += "<br><a href=/spider>爬取子青老師本學期課程</a><br>"
     link += "<br><a href=/movie1>爬取即將上映電影</a><br>"
     link += "<br><a href=/spiderMovie>爬取將上映電影</a><br>"
+    link += "<br><a href=/searchQ>查詢即將上映電影</a><br>"
     return link
 
 @app.route("/spiderMovie")
@@ -187,6 +188,31 @@ def movie1():
         post = "https://www.atmovies.com.tw/" + item.find("img").get("src")
         R += "<img src=" + post + "> </img><br><br>"
     return R
+
+@app.route("/searchQ", methods=["POST","GET"])
+def searchQ():
+    db = firestore.client()
+    results = []
+    keyword = ""
+    
+    if request.method == "POST":
+        keyword = request.form.get("keyword")
+        collection_ref = db.collection("電影")
+        docs = collection_ref.get()
+
+        for doc in docs:
+            movie = doc.to_dict()
+            if keyword in movie["title"]:
+                results.append({
+                    "title":  movie["title"],
+                    "picture": movie["picture"],
+                    "hyperlink": movie["hyperlink"],
+                    "showDate": movie["showDate"],
+                    "lastUpdate": movie["lastUpdate"]
+                })
+
+    return render_template("input.html", results=results, keyword=keyword)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
