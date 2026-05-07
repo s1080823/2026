@@ -37,11 +37,39 @@ def index():
     link += "<br><a href=/spiderMovie>爬取將上映電影</a><br>"
     link += "<br><a href=/searchQ>查詢即將上映電影</a><br>"
     link += "<br><a href=/road>十大肇事路口</a><br>"
+    link += "<br><a href=/weather>查詢目前天氣</a><br>"
     return link
+
+@app.route("/weather", methods=["GET", "POST"])
+def weather_query():
+    result_text = ""
+    if request.method == "POST":
+        city = request.form.get("city", "")
+        if city:
+            city = city.replace("台", "臺")
+            url = f"https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=rdec-key-123-45678-011121314&format=JSON&locationName={city}"
+            
+            try:
+                response = requests.get(url)
+                data = json.loads(response.text)
+                
+                if data["records"]["location"]:
+                    weather_element = data["records"]["location"][0]["weatherElement"]
+                    weather = weather_element[0]["time"][0]["parameter"]["parameterName"]
+                    rain = weather_element[1]["time"][0]["parameter"]["parameterName"]
+                    result_text = f"{city} 目前天氣預報：<br>{weather}，降雨機率：{rain}%"
+                else:
+                    result_text = "找不到該縣市，請輸入正確名稱（如：臺中市）。"
+            except Exception as e:
+                result_text = f"連線錯誤：{e}"
+                
+    return render_template("weather.html", result=result_text)
+
+
 
 @app.route("/road")
 def road():
-    R = "台中市十大肇事路口(113年10月)</h1><br>"
+    R = "台中市十大肇事路口(113年10月)作者:呂芳妤</h1><br>"
     url = "https://datacenter.taichung.gov.tw/swagger/OpenData/a1b899c0-511f-4e3d-b22b-814982a97e41"
     headers = {"User-Agent": "Mozilla/5.0"}
 
@@ -50,7 +78,7 @@ def road():
 
     JsonData = json.loads(Data.text)
     for item in JsonData:
-        R += (item["路口名稱"] + ",原因:" + item["主要肇因"]) + "<br>"
+        R += (item["路口名稱"] + ",原因:" + item["主要肇因"] + ",件數:" + item["總件數"]) + "<br>"
        
     return R
 
