@@ -36,7 +36,24 @@ def index():
     link += "<br><a href=/movie1>爬取即將上映電影</a><br>"
     link += "<br><a href=/spiderMovie>爬取將上映電影</a><br>"
     link += "<br><a href=/searchQ>查詢即將上映電影</a><br>"
+    link += "<br><a href=/road>十大肇事路口</a><br>"
     return link
+
+@app.route("/road")
+def road():
+    R = "台中市十大肇事路口(113年10月)</h1><br>"
+    url = "https://datacenter.taichung.gov.tw/swagger/OpenData/a1b899c0-511f-4e3d-b22b-814982a97e41"
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    Data = requests.get(url, headers=headers)
+    #print(Data.text)
+
+    JsonData = json.loads(Data.text)
+    for item in JsonData:
+        R += (item["路口名稱"] + ",原因:" + item["主要肇因"]) + "<br>"
+       
+    return R
+
 
 @app.route("/spiderMovie")
 def spiderMovie():
